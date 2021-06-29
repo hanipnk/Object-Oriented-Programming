@@ -468,6 +468,7 @@ martha.calcAge();
 
 */
 
+/*
 // Inheritance Between Classes : Object.create
 
 const PersonProto = {
@@ -497,3 +498,136 @@ const jay = Object.create(StudentProto);
 jay.init('Jay', 2010, 'Computer Science');
 jay.introduce();
 jay.calcAge();
+
+*/
+
+/*
+// Encalsulation : Protected Proterties and Methods
+// Encapsulation : Private Class Fields and Methods
+
+// 1) Public fields
+// 2) Private fields
+// 3) Public methods
+// 4) Private methods
+// (there is also the static version)
+
+class Account {
+  // 1) Public fields (instances) no longer on prototypes
+  locale = navigator.language;
+
+  // 2) Private fields (instances) no longer on prototypes
+  #movements = [];
+  #pin;
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    // Protected Property
+    this.#pin = pin;
+    //this._movements = [];
+    //this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+  // 3) Public methods
+  // Public Interface (API)
+  getMovements() {
+    return this.#movements;
+  }
+  deposit(val) {
+    this.#movements.push(val);
+    return this;
+  }
+  withdraw(val) {
+    this.deposit(-val);
+    return this;
+  }
+
+  requestLoan(val) {
+    //if (this.#approveLoan(val)) {
+    if (this._approveLoan(val)) {
+      this.deposit(val);
+      console.log(`Loan approved`);
+      return this;
+    }
+  }
+
+  static helper() {
+    console.log('Helper');
+  }
+  // 4) Private methods (no longer on prototypes )
+  //#approveLoan(val) {
+  _approveLoan(val) {
+    return true;
+  }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+
+// acc1._movements.push(250);
+// acc1._movements.push(-140);
+acc1.deposit(250);
+acc1.withdraw(140);
+acc1.requestLoan(1000);
+// acc1.approveLoan(1000);
+console.log(acc1.getMovements());
+console.log(acc1);
+Account.helper();
+
+//console.log(acc1.pin);
+
+//console.log(acc1.#movements); // Uncaught SyntaxError: Private field '#movements' must be declared in an enclosing class
+// I can not now access this property outside of class
+//console.log(acc1.#pin);
+//console.log(acc1.#approveLoan(100));
+
+// Chaning Methods
+acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000);
+// to make these chainable, simply add 'return this' at the end of the methods
+console.log(acc1.getMovements());
+
+*/
+
+// Coding Challenge 4
+
+class Carcl {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+  accelerate() {
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+  }
+  brake() {
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+    return this;
+  }
+}
+
+class EVCl extends Carcl {
+  #charge;
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge;
+  }
+  chargeBattery(chargeTo) {
+    this.#charge = chargeTo;
+    return this;
+  }
+  accelerate() {
+    this.speed -= 20;
+    this.#charge -= 1;
+    console.log(
+      `${this.make}is going at ${this.speed}km/h, with ${this.#charge}%`
+    );
+    return this;
+  }
+}
+
+const car1 = new EVCl('Rivian', 120, 23);
+console.log(car1);
+
+car1.accelerate().chargeBattery(100).brake();
+console.log(car1);
